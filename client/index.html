@@ -6,7 +6,7 @@
 </head>
 <body>
 <center>
-<canvas id="ctx" width="1200" height="600"></canvas>
+<canvas id="ctx" width="1200" height="600" style="border: 1px solid #000000;"></canvas>
 </center>
 
 <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
@@ -17,8 +17,26 @@
 
 	var socket = io();
 	var id = -1;
-	
+
 	socket.on("newPositions", function(data) {
+		ctx.clearRect(0,0,1200,600);
+		ctx.fillStyle="#FFFFFF";
+		ctx.fillRect(0,0,1200,600);
+		ctx.textAlign="center";
+		for(var i = 0; i < data.players.length; i++) {
+			if(!data.players[i].isDead) {
+				ctx.fillStyle = "#FF0000";
+				ctx.fillRect(data.players[i].x - 3, data.players[i].y - 3, 6, 6);
+			}
+		}
+		for(var i = 0; i < data.trails.length; i++) {
+			ctx.fillStyle = "#FF0000";
+			console.log(data.trails[i].x + " " + data.trails[i].y + " " + data.trails[i].endX + " " + data.trails[i].endY);
+			ctx.beginPath();
+			ctx.moveTo(data.trails[i].x, data.trails[i].y);
+			ctx.lineTo(data.trails[i].endX, data.trails[i].endY);
+			ctx.stroke();
+		}
 	});
 
 	socket.on("id", function(data) {

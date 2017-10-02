@@ -18,23 +18,44 @@ console.log(colors.green("[Trail Game] Server started on port " + port));
 
 var SOCKET_LIST = {};
 var PLAYER_LIST = {};
+var TRAIL_LIST = {};
+
+var gameStarted = true;
+
+var Trail = function(id, x, y) {
+	var self = {
+		x:x,
+		y:y,
+		endX:x,
+		endY:y,
+		id:id
+	}
+
+	return self;
+}
 
 var Player = function(id) {
 	var self = {
-		x:300,
-		y:300,
+		x:Math.floor(Math.random() * 1180) + 10,
+		y:Math.floor(Math.random() * 580) + 10,
+		mx:0,
+		my:0,
 		id:id,
+		currentTrail:-1,
 		joinKickTimeout:10,
 		pressingRight:false,
 		pressingLeft:false,
 		pressingUp:false,
 		pressingDown:false,
+		isDead:false,
 		name:"Unnamed"
 	}
 
 	self.respawn = function() {
-		self.x = 300;
-		self.y = 300;
+		self.x = Math.floor(Math.random() * 1180) + 10;
+		self.y = Math.floor(Math.random() * 580) + 10;
+		self.isDead = false;
+		self.currentTrail = -1;
 		self.pressingRight = false;
 		self.pressingLeft = false;
 		self.pressingUp = false;
@@ -42,8 +63,93 @@ var Player = function(id) {
 	}
 
 	self.update = function() {
-		
+		if(gameStarted && !self.isDead) {
+			var lmx = self.mx;
+			var lmy = self.my;
+
+			if(self.pressingRight && self.mx != -1) {
+				self.mx = 1;
+				self.my = 0;
+			} else if(self.pressingLeft && self.mx != 1) {
+				self.mx = -1;
+				self.my = 0;
+			} else if(self.pressingUp && self.my != 1) {
+				self.mx = 0;
+				self.my = -1;
+			} else if(self.pressingDown && self.my != -1) {
+				self.mx = 0;
+				self.my = 1;
+			}
+			
+			var trail = getTrailByID(self.currentTrail);
+			if(trail != undefined) {
+				if(lmx != self.mx || lmy != self.my) {
+					trail.endX = self.x;
+					trail.endY = self.y;
+					var trailID = (Math.random() * 100);
+        			TRAIL_LIST[trailID] = Trail(trailID, self.x, self.y);
+        			self.currentTrail = trailID;
+				} else {
+					trail.endX = self.x;
+					trail.endY = self.y;
+				}
+			} else {
+			}
+			self.x += self.mx;
+			self.y += self.my;
+
+			if(self.x < 0 || self.x > 1200 || self.y < 0 || self.y > 600) {
+				self.isDead = true;
+			}
+
+			for(var tra in TRAIL_LIST) {
+				var trail = TRAIL_LIST[tra];
+				if(trail.id != self.currentTrail) {
+					var colission = 0;
+					if(trail.endX > trail.x) {
+						if(self.x >= trail.x && self.x <= trail.endX) {
+							colission++;
+						}
+					} else if(trail.endX < trail.x) {
+						if(self.x <= trail.x && self.x >= trail.endX) {
+							colission++;
+						}
+					} else if(self.x == trail.x || self.x == trail.endX) {
+						colission++;
+					}
+					if(trail.endY > trail.y) {
+						if(self.y >= trail.y && self.y <= trail.endY) {
+							colission++;
+						}
+					} else if(trail.endY < trail.y) {
+						if(self.y <= trail.y && self.y >= trail.endY) {
+							colission++;
+						}
+					} else if(self.y == trail.y || self.y == trail.endY) {
+						colission++;
+					}
+					if(colission == 2) {
+						self.isDead = true;
+					}
+				}
+			}
+		}
 	}
+
+	if(Boolean(Math.round(Math.random()))) {
+		if(Boolean(Math.round(Math.random()))) {
+			self.mx = 1;
+		} else {
+			self.mx = -1;
+		}
+	} else {
+		if(Boolean(Math.round(Math.random()))) {
+			self.my = 1;
+		} else {
+			self.my = -1;
+		}
+	}
+
 	return self;
 }
 
@@ -52,6 +158,14 @@ function getPlayerByID(id) {
 		var player = PLAYER_LIST[p];
 		if(player.id == id) {
 			return player;
+		}
+	}
+}
+function getTrailByID(id) {
+	for(var t in TRAIL_LIST) {
+		var trail = TRAIL_LIST[t];
+		if(trail.id == id) {
+			return trail;
 		}
 	}
 }
@@ -88,8 +202,13 @@ io.sockets.on("connection", function(socket) {
     socket.on('kthx',function(data){
         var player = getPlayerByID(socket.id);
         if(!(player == undefined)) {
-        	player.joinKickTimeout = -1;
-        	console.log(colors.cyan("[Trail Game] Player with id " + socket.id + " is now verified"));
+        	if(player.joinKickTimeout != -1) {
+        		player.joinKickTimeout = -1;
+        		var trailID = (Math.random() * 100);
+        		TRAIL_LIST[trailID] = Trail(trailID, player.x, player.y);
+        		player.currentTrail = trailID;
+        		console.log(colors.cyan("[Trail Game] Player with id " + socket.id + " is now verified"));
+        	}
         }
     });
 
@@ -113,6 +232,7 @@ setInterval(function() {
 setInterval(function() {
 	try {
 		var playerPack = [];
+		var trailPack = [];
 		for(var p in PLAYER_LIST) {
 			var player = PLAYER_LIST[p];
 			player.update();
@@ -121,17 +241,30 @@ setInterval(function() {
 				playerPack.push({
 					x:player.x,
 					y:player.y,
+					isDead:player.isDead,
 					name:player.name
 				});
 			}
 		}
+
+		for(var t in TRAIL_LIST) {
+			var trail = TRAIL_LIST[t];
+			trailPack.push({
+				x:trail.x,
+				y:trail.y,
+				endX:trail.endX,
+				endY:trail.endY
+			});
+		}
+
 		for(var i in SOCKET_LIST) {
 			var socket = SOCKET_LIST[i];
 			socket.emit("newPositions", {
-				players:playerPack
+				players:playerPack,
+				trails:trailPack
 			});
 		}
 	} catch(err) {
 		console.log(colors.red("[Trail Game] (Warning) Crash during main update loop. " + err));
 	}
-},(1000 / 25));
+},(1000 / 60));
