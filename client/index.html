@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="theme-color" content="#309090" />
+<title>Trail Game</title>
+</head>
+<body>
+<center>
+<canvas id="ctx" width="1200" height="600"></canvas>
+</center>
+
+<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+<script>
+	var canvas = document.getElementById('ctx');
+	var ctx = canvas.getContext("2d");
+	ctx.font = "10px Arial";
+
+	var socket = io();
+	var id = -1;
+	
+	socket.on("newPositions", function(data) {
+	});
+
+	socket.on("id", function(data) {
+		console.log("Your id is " + data.id);
+		id = data.id;
+		setTimeout(function() {
+			socket.emit("kthx");
+		}, 100);
+	});
+
+    document.onkeydown = function(event){
+        if(event.keyCode === 68)    //d
+            socket.emit('keyPress',{inputId:'right',state:true});
+        else if(event.keyCode === 83)   //s
+            socket.emit('keyPress',{inputId:'down',state:true});
+        else if(event.keyCode === 65) //a
+            socket.emit('keyPress',{inputId:'left',state:true});
+        else if(event.keyCode === 87) // w
+            socket.emit('keyPress',{inputId:'up',state:true});
+    }
+    document.onkeyup = function(event){
+        if(event.keyCode === 68)    //d
+            socket.emit('keyPress',{inputId:'right',state:false});
+        else if(event.keyCode === 83)   //s
+            socket.emit('keyPress',{inputId:'down',state:false});
+        else if(event.keyCode === 65) //a
+            socket.emit('keyPress',{inputId:'left',state:false});
+        else if(event.keyCode === 87) // w
+            socket.emit('keyPress',{inputId:'up',state:false});
+    }
+</script>
+</body>
+</html>
