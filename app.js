@@ -52,7 +52,7 @@ var Player = function(id) {
 		pressingUp:false,
 		pressingDown:false,
 		isDead:false,
-		name:"Unnamed"
+		name:"Unnamed player"
 	}
 
 	self.respawn = function() {
@@ -65,8 +65,8 @@ var Player = function(id) {
 		self.pressingUp = false;
 		self.pressingDown = false;
 		var trailID = (Math.random() * 100);
-        TRAIL_LIST[trailID] = Trail(trailID, self.x, self.y);
-        self.currentTrail = trailID;
+		TRAIL_LIST[trailID] = Trail(trailID, self.x, self.y);
+		self.currentTrail = trailID;
 	}
 
 	self.update = function() {
@@ -94,8 +94,8 @@ var Player = function(id) {
 					trail.endX = self.x;
 					trail.endY = self.y;
 					var trailID = (Math.random() * 100);
-        			TRAIL_LIST[trailID] = Trail(trailID, self.x, self.y);
-        			self.currentTrail = trailID;
+					TRAIL_LIST[trailID] = Trail(trailID, self.x, self.y);
+					self.currentTrail = trailID;
 				} else {
 					trail.endX = self.x;
 					trail.endY = self.y;
@@ -193,31 +193,43 @@ io.sockets.on("connection", function(socket) {
 		console.log(colors.cyan("[Trail Game] Player with id " + socket.id + " disconnected"));
 	});
 
-    socket.on('keyPress',function(data){
-        try {
-        	if(data.inputId === 'left')
-	            player.pressingLeft = data.state;
-	        else if(data.inputId === 'right')
-	            player.pressingRight = data.state;
-	        else if(data.inputId === 'up')
-	            player.pressingUp = data.state;
-	        else if(data.inputId === 'down')
-	            player.pressingDown = data.state;
-        } catch(err) {
-        }
-    });
-    socket.on('kthx',function(data){
-        var player = getPlayerByID(socket.id);
-        if(!(player == undefined)) {
-        	if(player.joinKickTimeout != -1) {
-        		player.joinKickTimeout = -1;
-        		var trailID = (Math.random() * 100);
-        		TRAIL_LIST[trailID] = Trail(trailID, player.x, player.y);
-        		player.currentTrail = trailID;
-        		console.log(colors.cyan("[Trail Game] Player with id " + socket.id + " is now verified"));
-        	}
-        }
-    });
+	socket.on('changeName', function(data) {
+		try {
+			var player = getPlayerByID(socket.id);
+			player.name = data.name;
+			socket.emit("newName", {
+				name:player.name
+			});
+		} catch(err) {
+			
+		}
+	});
+
+	socket.on('keyPress',function(data){
+		try {
+			if(data.inputId === 'left')
+				player.pressingLeft = data.state;
+			else if(data.inputId === 'right')
+				player.pressingRight = data.state;
+			else if(data.inputId === 'up')
+				player.pressingUp = data.state;
+			else if(data.inputId === 'down')
+				player.pressingDown = data.state;
+		} catch(err) {
+		}
+	});
+	socket.on('kthx',function(data){
+		var player = getPlayerByID(socket.id);
+		if(!(player == undefined)) {
+			if(player.joinKickTimeout != -1) {
+				player.joinKickTimeout = -1;
+				var trailID = (Math.random() * 100);
+				TRAIL_LIST[trailID] = Trail(trailID, player.x, player.y);
+				player.currentTrail = trailID;
+				console.log(colors.cyan("[Trail Game] Player with id " + socket.id + " is now verified"));
+			}
+		}
+	});
 
 });
 
