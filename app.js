@@ -194,7 +194,10 @@ io.sockets.on("connection", function(socket) {
 	socket.emit("id", {
 		id:socket.id
 	});
-	
+	socket.emit("newName", {
+		name:player.name
+	});
+
 	socket.on("disconnect", function() {
 		delete SOCKET_LIST[socket.id];
 		delete PLAYER_LIST[socket.id];
