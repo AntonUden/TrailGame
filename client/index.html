@@ -73,7 +73,7 @@
 
 		for(var i = 0; i < data.players.length; i++) {
 			if(!data.players[i].isDead) {
-				ctx.fillStyle = "#FF0000";
+				ctx.fillStyle= ("rgba(" + data.players[i].color.r + ", " + data.players[i].color.g + ", " + data.players[i].color.b + ", 1)");
 
 				if(data.players[i].id == id) {
 					ctx.fillStyle = "#00FF00";					

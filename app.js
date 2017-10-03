@@ -52,6 +52,11 @@ var Player = function(id) {
 		pressingUp:false,
 		pressingDown:false,
 		isDead:false,
+		color:{
+			r:Math.floor(Math.random() * 255),
+			g:Math.floor(Math.random() * 200),
+			b:Math.floor(Math.random() * 255)
+		},
 		name:"Unnamed player"
 	}
 
@@ -181,6 +186,9 @@ io.sockets.on("connection", function(socket) {
 	socket.id = Math.random();
 	SOCKET_LIST[socket.id] = socket;
 	var player = Player(socket.id);
+	if(gameStarted) {
+		player.isDead = true;
+	}
 	PLAYER_LIST[socket.id] = player;
 	console.log(colors.cyan("[Trail Game] Socket connection with id " + socket.id + " connected"));
 	socket.emit("id", {
@@ -223,9 +231,11 @@ io.sockets.on("connection", function(socket) {
 		if(!(player == undefined)) {
 			if(player.joinKickTimeout != -1) {
 				player.joinKickTimeout = -1;
-				var trailID = (Math.random() * 100);
-				TRAIL_LIST[trailID] = Trail(trailID, player.x, player.y);
-				player.currentTrail = trailID;
+				if(!player.isDead) {
+					var trailID = (Math.random() * 100);
+					TRAIL_LIST[trailID] = Trail(trailID, player.x, player.y);
+					player.currentTrail = trailID;
+				}
 				console.log(colors.cyan("[Trail Game] Player with id " + socket.id + " is now verified"));
 			}
 		}
@@ -325,6 +335,7 @@ setInterval(function() {
 					x:player.x,
 					y:player.y,
 					id:player.id,
+					color:player.color,
 					isDead:player.isDead,
 					name:player.name
 				});
