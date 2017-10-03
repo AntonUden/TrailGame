@@ -1,0 +1,26 @@
+{
+  "name": "TrailGame",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+    "engines": {
+    "node": "6.11.1"
+  },
+  "scripts": {
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zeeraa/TrailGame.git"
+  },
+  "dependencies": {
+    "colors": "1.1.2",
+    "express": "4.15.5",
+    "ws": "3.2.0",
+    "socket.io": "2.0.3"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://github.com/Zeeraa/TrailGame"
+}
