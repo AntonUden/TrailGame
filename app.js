@@ -20,7 +20,11 @@ var SOCKET_LIST = {};
 var PLAYER_LIST = {};
 var TRAIL_LIST = {};
 
-var gameStarted = true;
+var gameStarted = false;
+var inCountdown = false;
+var waiting = false;
+var countdown = 10;
+var lastWinner = "";
 
 var Trail = function(id, x, y) {
 	var self = {
@@ -36,8 +40,8 @@ var Trail = function(id, x, y) {
 
 var Player = function(id) {
 	var self = {
-		x:Math.floor(Math.random() * 1180) + 10,
-		y:Math.floor(Math.random() * 580) + 10,
+		x:Math.floor(Math.random() * 1100) + 50,
+		y:Math.floor(Math.random() * 500) + 50,
 		mx:0,
 		my:0,
 		id:id,
@@ -52,14 +56,17 @@ var Player = function(id) {
 	}
 
 	self.respawn = function() {
-		self.x = Math.floor(Math.random() * 1180) + 10;
-		self.y = Math.floor(Math.random() * 580) + 10;
+		self.x = Math.floor(Math.random() * 1100) + 50;
+		self.y = Math.floor(Math.random() * 500) + 50;
 		self.isDead = false;
 		self.currentTrail = -1;
 		self.pressingRight = false;
 		self.pressingLeft = false;
 		self.pressingUp = false;
 		self.pressingDown = false;
+		var trailID = (Math.random() * 100);
+        TRAIL_LIST[trailID] = Trail(trailID, self.x, self.y);
+        self.currentTrail = trailID;
 	}
 
 	self.update = function() {
@@ -228,11 +235,75 @@ setInterval(function() {
 	}
 }, 100);
 
+// Countdown loop
+setInterval(function() {
+	if(inCountdown) {
+		if(countdown > 0) {
+			countdown--;
+			console.log(colors.yellow("[Trail Game] Starting in " + countdown));
+		}
+		if(countdown <= 0) {
+			console.log(colors.yellow("[Trail Game] Round started"));
+			inCountdown = false;
+			gameStarted = true;
+		}
+	}
+}, 1000)
+
 // Main update loop
 setInterval(function() {
+	if(!gameStarted && !waiting) {
+		if(Object.keys(PLAYER_LIST).length > 1) {
+			inCountdown = true;
+		} else {
+			inCountdown = false;
+			countdown = 10;
+		}
+	} else {
+		countdown = 10;
+	}
+
+	if(gameStarted) {
+		var playersAlive = 0;
+		for(var p in PLAYER_LIST) {
+			var player = PLAYER_LIST[p];
+			if(!player.isDead) {
+				playersAlive++;
+			}
+		}
+		if(playersAlive <= 1) {
+			console.log(colors.yellow("[Trail Game] Round over. next round starting in 3 seconds"));
+			waiting = true;
+			inCountdown = false;
+			countdown = 10;
+			gameStarted = false;
+			setTimeout(function() {
+				console.log(colors.yellow("[Trail Game] Countdown started"));
+				waiting = false;
+				inCountdown = true;
+				countdown = 10;
+			}, 3000);
+			for(var i in TRAIL_LIST) {
+				delete TRAIL_LIST[i];
+			}
+			lastWinner = "None";
+			for(var p in PLAYER_LIST) {
+				var player = PLAYER_LIST[p];
+				if(!player.isDead) {
+					console.log(colors.yellow("[Trail Game] Winner: " + player.name));
+					lastWinner = player.name;
+				}
+				player.respawn();
+			}
+		}
+	}
+
+
 	try {
 		var playerPack = [];
 		var trailPack = [];
+
+		var onlinePlayers = Object.keys(PLAYER_LIST).length;
 		for(var p in PLAYER_LIST) {
 			var player = PLAYER_LIST[p];
 			player.update();
@@ -241,6 +312,7 @@ setInterval(function() {
 				playerPack.push({
 					x:player.x,
 					y:player.y,
+					id:player.id,
 					isDead:player.isDead,
 					name:player.name
 				});
@@ -259,9 +331,15 @@ setInterval(function() {
 
 		for(var i in SOCKET_LIST) {
 			var socket = SOCKET_LIST[i];
-			socket.emit("newPositions", {
+			socket.emit("data", {
 				players:playerPack,
-				trails:trailPack
+				trails:trailPack,
+				countdown:countdown,
+				gameStarted:gameStarted,
+				inCountdown:inCountdown,
+				waiting:waiting,
+				onlinePlayers:onlinePlayers,
+				lastWinner:lastWinner
 			});
 		}
 	} catch(err) {

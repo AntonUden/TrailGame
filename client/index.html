@@ -3,10 +3,24 @@
 <head>
 <meta name="theme-color" content="#309090" />
 <title>Trail Game</title>
+
+<style type="text/css">
+	html { 
+		background: url("/client/background.jpg") no-repeat center center fixed; 
+		-webkit-background-size: cover;
+		-moz-background-size: cover;
+		-o-background-size: cover;
+		background-size: cover;
+	}
+</style>
+
 </head>
 <body>
 <center>
 <canvas id="ctx" width="1200" height="600" style="border: 1px solid #000000;"></canvas>
+<br>
+<input id="nameInput" value="Unnamed" maxlength="16" pattern="[A-Za-z0-9]" required onkeydown = "nameInputKeydown(event)">
+<button id="setName" onclick="changeName()">Set name</button>
 </center>
 
 <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
@@ -14,28 +28,70 @@
 	var canvas = document.getElementById('ctx');
 	var ctx = canvas.getContext("2d");
 	ctx.font = "10px Arial";
+	ctx.clearRect(0,0,1200,600);
+	ctx.fillStyle="#FFFFFF";
+	ctx.fillRect(0,0,1200,600);
+	ctx.textAlign="center";
+	ctx.fillStyle="#000000";
+	ctx.fillText("No data from server =(", 600, 300);
 
 	var socket = io();
 	var id = -1;
 
-	socket.on("newPositions", function(data) {
+	function nameInputKeydown(event) {
+		if (event.keyCode == 13) {
+			document.getElementById('setName').click();
+		}
+	}
+
+	function changeName() {
+		var name = "" + document.getElementById("nameInput").value;
+		if(name == "") {
+			name = "Unnamed";
+		}
+		console.log("changing name to " + name);
+		socket.emit("changeName", {name:name});
+		document.getElementById("nameInput").value = name;
+	}
+
+	socket.on("data", function(data) {
 		ctx.clearRect(0,0,1200,600);
 		ctx.fillStyle="#FFFFFF";
 		ctx.fillRect(0,0,1200,600);
 		ctx.textAlign="center";
-		for(var i = 0; i < data.players.length; i++) {
-			if(!data.players[i].isDead) {
-				ctx.fillStyle = "#FF0000";
-				ctx.fillRect(data.players[i].x - 3, data.players[i].y - 3, 6, 6);
-			}
-		}
+		ctx.font="10px Arial";
+
 		for(var i = 0; i < data.trails.length; i++) {
 			ctx.fillStyle = "#FF0000";
-			console.log(data.trails[i].x + " " + data.trails[i].y + " " + data.trails[i].endX + " " + data.trails[i].endY);
 			ctx.beginPath();
 			ctx.moveTo(data.trails[i].x, data.trails[i].y);
 			ctx.lineTo(data.trails[i].endX, data.trails[i].endY);
 			ctx.stroke();
+		}
+
+		for(var i = 0; i < data.players.length; i++) {
+			if(!data.players[i].isDead) {
+				ctx.fillStyle = "#FF0000";
+
+				if(data.players[i].id == id) {
+					ctx.fillStyle = "#00FF00";					
+				}
+
+				ctx.fillRect(data.players[i].x - 3, data.players[i].y - 3, 6, 6);
+				ctx.fillStyle = "#000000";
+				ctx.fillText(data.players[i].name, data.players[i].x, data.players[i].y - 10);
+			}
+		}
+
+		ctx.font="30px Arial";
+		if(data.inCountdown && !data.gameStarted) {
+			ctx.fillText(data.countdown, 600, 300);
+		}
+		if(!data.gameStarted && !data.waiting && data.onlinePlayers < 2) {
+			ctx.fillText("Waiting for players", 600, 300);
+		}
+		if(data.waiting && !data.gameStarted && !data.inCountdown) {
+			ctx.fillText("Winner: " + data.lastWinner, 600, 300);
 		}
 	});
 
