@@ -32,7 +32,8 @@ var Trail = function(id, x, y) {
 		y:y,
 		endX:x,
 		endY:y,
-		id:id
+		id:id,
+		color:0
 	}
 
 	return self;
@@ -52,11 +53,7 @@ var Player = function(id) {
 		pressingUp:false,
 		pressingDown:false,
 		isDead:false,
-		color:{
-			r:Math.floor(Math.random() * 255),
-			g:Math.floor(Math.random() * 200),
-			b:Math.floor(Math.random() * 255)
-		},
+		color:Math.floor(Math.random() * 360),
 		name:"Unnamed player"
 	}
 
@@ -71,6 +68,7 @@ var Player = function(id) {
 		self.pressingDown = false;
 		var trailID = (Math.random() * 100);
 		TRAIL_LIST[trailID] = Trail(trailID, self.x, self.y);
+		TRAIL_LIST[trailID].color = self.color;
 		self.currentTrail = trailID;
 	}
 
@@ -100,6 +98,7 @@ var Player = function(id) {
 					trail.endY = self.y;
 					var trailID = (Math.random() * 100);
 					TRAIL_LIST[trailID] = Trail(trailID, self.x, self.y);
+					TRAIL_LIST[trailID].color = self.color;
 					self.currentTrail = trailID;
 				} else {
 					trail.endX = self.x;
@@ -235,6 +234,7 @@ io.sockets.on("connection", function(socket) {
 					if(!player.isDead) {
 						var trailID = (Math.random() * 100);
 						TRAIL_LIST[trailID] = Trail(trailID, player.x, player.y);
+						TRAIL_LIST[trailID].color = player.color;
 						player.currentTrail = trailID;
 					}
 					console.log(colors.cyan("[Trail Game] Player with id " + socket.id + " is now verified"));
@@ -349,7 +349,8 @@ setInterval(function() {
 				x:trail.x,
 				y:trail.y,
 				endX:trail.endX,
-				endY:trail.endY
+				endY:trail.endY,
+				color:trail.color
 			});
 		}
 

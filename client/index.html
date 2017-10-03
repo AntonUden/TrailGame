@@ -38,6 +38,10 @@
 	var socket = io();
 	var id = -1;
 
+	var start = new Date();
+	var lines = 16, cW = ctx.canvas.width / 2, cH = ctx.canvas.height / 2;
+
+
 	function nameInputKeydown(event) {
 		if (event.keyCode == 13) {
 			document.getElementById('setName').click();
@@ -64,7 +68,8 @@
 		ctx.font="10px Arial";
 
 		for(var i = 0; i < data.trails.length; i++) {
-			ctx.fillStyle = "#FF0000";
+			console.log(data.trails[i].color);
+			ctx.strokeStyle = "hsl(" + data.trails[i].color + ", 85%, 55%)";
 			ctx.beginPath();
 			ctx.moveTo(data.trails[i].x, data.trails[i].y);
 			ctx.lineTo(data.trails[i].endX, data.trails[i].endY);
@@ -73,7 +78,7 @@
 
 		for(var i = 0; i < data.players.length; i++) {
 			if(!data.players[i].isDead) {
-				ctx.fillStyle= ("rgba(" + data.players[i].color.r + ", " + data.players[i].color.g + ", " + data.players[i].color.b + ", 1)");
+				ctx.fillStyle= "hsl(" + data.players[i].color + ", 85%, 55%)";
 
 				if(data.players[i].id == id) {
 					ctx.fillStyle = "#00FF00";					
@@ -84,8 +89,8 @@
 				ctx.fillText(data.players[i].name, data.players[i].x, data.players[i].y - 10);
 			}
 		}
-
-		ctx.font="30px Arial";
+		ctx.fillStyle = "#000000";
+		ctx.font="40px Arial";
 		if(data.inCountdown && !data.gameStarted) {
 			ctx.fillText(data.countdown, 600, 300);
 		}
