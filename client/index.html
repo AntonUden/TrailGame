@@ -68,7 +68,6 @@
 		ctx.font="10px Arial";
 
 		for(var i = 0; i < data.trails.length; i++) {
-			console.log(data.trails[i].color);
 			ctx.strokeStyle = "hsl(" + data.trails[i].color + ", 100%, 55%)";
 			ctx.beginPath();
 			ctx.moveTo(data.trails[i].x, data.trails[i].y);
@@ -78,10 +77,19 @@
 
 		for(var i = 0; i < data.players.length; i++) {
 			if(!data.players[i].isDead) {
-				ctx.fillStyle= "hsl(" + data.players[i].color + ", 100%, 50%)";
+				ctx.fillStyle = "hsl(" + data.players[i].color + ", 100%, 50%)";
 
 				if(data.players[i].id == id) {
-					ctx.fillStyle = "#00FF00";					
+					if(!data.gameStarted) {
+						ctx.strokeStyle = "blue";
+						ctx.beginPath();
+						ctx.arc(data.players[i].x, data.players[i].y, 10 + (Math.sin(new Date().getTime() / 500) * 5), 0, 2*Math.PI);
+						ctx.stroke();
+						ctx.beginPath();
+						ctx.arc(data.players[i].x, data.players[i].y, 10 + (Math.cos(new Date().getTime() / 500) * 5), 0, 2*Math.PI);
+						ctx.stroke();
+					}
+					ctx.fillStyle = "#00FF00";				
 				}
 
 				ctx.fillRect(data.players[i].x - 3, data.players[i].y - 3, 6, 6);
