@@ -47,7 +47,7 @@ var Player = function(id) {
 		my:0,
 		id:id,
 		currentTrail:-1,
-		joinKickTimeout:10,
+		joinKickTimeout:30,
 		pressingRight:false,
 		pressingLeft:false,
 		pressingUp:false,

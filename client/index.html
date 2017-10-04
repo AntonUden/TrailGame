@@ -27,7 +27,7 @@
 <script>
 	var canvas = document.getElementById('ctx');
 	var ctx = canvas.getContext("2d");
-	ctx.font = "10px Arial";
+	ctx.font = "50px Arial";
 	ctx.clearRect(0,0,1200,600);
 	ctx.fillStyle="#FFFFFF";
 	ctx.fillRect(0,0,1200,600);
@@ -69,7 +69,7 @@
 
 		for(var i = 0; i < data.trails.length; i++) {
 			console.log(data.trails[i].color);
-			ctx.strokeStyle = "hsl(" + data.trails[i].color + ", 85%, 55%)";
+			ctx.strokeStyle = "hsl(" + data.trails[i].color + ", 100%, 55%)";
 			ctx.beginPath();
 			ctx.moveTo(data.trails[i].x, data.trails[i].y);
 			ctx.lineTo(data.trails[i].endX, data.trails[i].endY);
@@ -78,7 +78,7 @@
 
 		for(var i = 0; i < data.players.length; i++) {
 			if(!data.players[i].isDead) {
-				ctx.fillStyle= "hsl(" + data.players[i].color + ", 85%, 55%)";
+				ctx.fillStyle= "hsl(" + data.players[i].color + ", 100%, 50%)";
 
 				if(data.players[i].id == id) {
 					ctx.fillStyle = "#00FF00";					
