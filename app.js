@@ -20,9 +20,7 @@ var SOCKET_LIST = {};
 var PLAYER_LIST = {};
 var TRAIL_LIST = {};
 
-var gameStarted = false;
-var inCountdown = false;
-var waiting = false;
+var gameStarted, inCountdown, waiting = false;
 var countdown = 10;
 var lastWinner = "";
 
@@ -35,7 +33,6 @@ var Trail = function(id, x, y) {
 		id:id,
 		color:0
 	}
-
 	return self;
 }
 
@@ -146,7 +143,6 @@ var Player = function(id) {
 			}
 		}
 	}
-
 	if(Boolean(Math.round(Math.random()))) {
 		if(Boolean(Math.round(Math.random()))) {
 			self.mx = 1;
@@ -197,12 +193,14 @@ io.sockets.on("connection", function(socket) {
 		name:player.name
 	});
 
+	// Player disconnect
 	socket.on("disconnect", function() {
 		delete SOCKET_LIST[socket.id];
 		delete PLAYER_LIST[socket.id];
 		console.log(colors.cyan("[Trail Game] Player with id " + socket.id + " disconnected"));
 	});
 
+	// Player name change
 	socket.on('changeName', function(data) {
 		try {
 			var player = getPlayerByID(socket.id);
@@ -213,6 +211,7 @@ io.sockets.on("connection", function(socket) {
 		} catch(err) {}
 	});
 
+	// Key Presses
 	socket.on('keyPress',function(data){
 		try {
 			if(data.inputId === 'left')
@@ -225,6 +224,8 @@ io.sockets.on("connection", function(socket) {
 				player.pressingDown = data.state;
 		} catch(err) {}
 	});
+
+	// Player verification
 	socket.on('kthx',function(data){
 		try {
 			var player = getPlayerByID(socket.id);
@@ -245,6 +246,7 @@ io.sockets.on("connection", function(socket) {
 
 });
 
+// Player afk kick loop
 setInterval(function() {
 	for(var p in PLAYER_LIST) {
 		var player = PLAYER_LIST[p];
