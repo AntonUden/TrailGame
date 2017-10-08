@@ -43,6 +43,7 @@ var Player = function(id) {
 		mx:0,
 		my:0,
 		id:id,
+		afkKickTimeout:100,
 		currentTrail:-1,
 		joinKickTimeout:30,
 		pressingRight:false,
@@ -211,6 +212,13 @@ io.sockets.on("connection", function(socket) {
 		} catch(err) {}
 	});
 
+	socket.on('not afk', function(data) {
+		try {
+			var player = getPlayerByID(socket.id);
+			player.afkKickTimeout = 100;
+		} catch(err) {}
+	});
+
 	// Key Presses
 	socket.on('keyPress',function(data){
 		try {
@@ -246,14 +254,22 @@ io.sockets.on("connection", function(socket) {
 
 });
 
+setInterval(function() {
+	for(var i in SOCKET_LIST) {
+		var socket = SOCKET_LIST[i];
+		socket.emit("afk?", {});
+	}
+}, 1000);
+
 // Player afk kick loop
 setInterval(function() {
 	for(var p in PLAYER_LIST) {
 		var player = PLAYER_LIST[p];
+		player.afkKickTimeout--;
 		if(player.joinKickTimeout > 0) {
 			player.joinKickTimeout--;
 		}
-		if(player.joinKickTimeout == 0) {
+		if(player.joinKickTimeout == 0 || player.afkKickTimeout <= 0) {
 			delete PLAYER_LIST[player.id];
 			delete SOCKET_LIST[player.id];
 			console.log(colors.red("[Trail Game] Kicked " + player.id + " for inactivity"));
@@ -274,7 +290,7 @@ setInterval(function() {
 			gameStarted = true;
 		}
 	}
-}, 1000)
+}, 1000);
 
 // Main update loop
 setInterval(function() {

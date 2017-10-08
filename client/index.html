@@ -111,7 +111,12 @@
 	});
 
 	socket.on("newName", function(data) {
-		console.log("Sever accepted name change to " + data.name);
+		console.log("Sever changed your name to " + data.name);
+		document.getElementById("nameInput").value = data.name;
+	});
+
+	socket.on("newName", function(data) {
+		console.log("Sever changed your name to " + data.name);
 		document.getElementById("nameInput").value = data.name;
 	});
 
@@ -121,6 +126,10 @@
 		setTimeout(function() {
 			socket.emit("kthx");
 		}, 100);
+	});
+
+	socket.on("afk?", function(data) {
+		socket.emit("not afk");
 	});
 
 	document.onkeydown = function(event){
