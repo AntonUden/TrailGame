@@ -32,6 +32,15 @@
 	ctx.fillStyle="#FFFFFF";
 	ctx.fillRect(0,0,1200,600);
 	ctx.textAlign="center";
+
+	ctx.fillStyle = "#BBBBBB";	
+	for(var bgLineX = 0; bgLineX < 1200; bgLineX+=20) {
+		ctx.fillRect(bgLineX, 0, 1, 600);
+	}
+	for(var bgLineY = 0; bgLineY < 600; bgLineY+=20) {
+		ctx.fillRect(0, bgLineY, 1200, 1);
+	}
+
 	ctx.fillStyle="#000000";
 	ctx.fillText("No data from server =(", 600, 300);
 
@@ -66,6 +75,14 @@
 		ctx.fillRect(0,0,1200,600);
 		ctx.textAlign="center";
 		ctx.font="10px Arial";
+
+		ctx.fillStyle = "#BBBBBB";	
+		for(var bgLineX = 0; bgLineX < 1200; bgLineX+=20) {
+			ctx.fillRect(bgLineX, 0, 1, 600);
+		}
+		for(var bgLineY = 0; bgLineY < 600; bgLineY+=20) {
+			ctx.fillRect(0, bgLineY, 1200, 1);
+		}
 
 		for(var i = 0; i < data.trails.length; i++) {
 			ctx.strokeStyle = "hsl(" + data.trails[i].color + ", 100%, 50%)";
