@@ -123,7 +123,16 @@
 			ctx.fillText("Waiting for players", 600, 300);
 		}
 		if(data.waiting && !data.gameStarted && !data.inCountdown) {
+			if(data.lastWinnerID == id) {
+				ctx.font="15px Arial";
+				ctx.fillStyle = "#000000";
+				ctx.fillText("You Won", 600, 330);
+				ctx.font="40px Arial";
+				ctx.fillStyle = "#33FF33";
+			}
 			ctx.fillText("Winner: " + data.lastWinner, 600, 300);
+			console.log("1:"+data.lastWinnerID);
+			console.log("2:"+id);
 		}
 	});
 

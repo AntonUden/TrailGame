@@ -23,6 +23,7 @@ var TRAIL_LIST = {};
 var gameStarted, inCountdown, waiting = false;
 var countdown = 10;
 var lastWinner = "";
+var lastWinnerID = -1.0;
 
 var Trail = function(id, x, y) {
 	var self = {
@@ -333,8 +334,9 @@ setInterval(function() {
 				for(var p in PLAYER_LIST) {
 					var player = PLAYER_LIST[p];
 					if(!player.isDead) {
-						console.log(colors.yellow("[Trail Game] Winner: " + player.name));
+						console.log(colors.yellow("[Trail Game] Winner: " + player.name + " ID: " + player.id));
 						lastWinner = player.name;
+						lastWinnerID = player.id;
 					}
 					player.respawn();
 				}
@@ -382,7 +384,8 @@ setInterval(function() {
 				inCountdown:inCountdown,
 				waiting:waiting,
 				onlinePlayers:onlinePlayers,
-				lastWinner:lastWinner
+				lastWinner:lastWinner,
+				lastWinnerID:lastWinnerID
 			});
 		}
 	} catch(err) {
