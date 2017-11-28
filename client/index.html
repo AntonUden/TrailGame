@@ -32,7 +32,6 @@
 	ctx.fillStyle="#FFFFFF";
 	ctx.fillRect(0,0,1200,600);
 	ctx.textAlign="center";
-
 	ctx.fillStyle = "#BBBBBB";	
 	for(var bgLineX = 0; bgLineX < 1200; bgLineX+=20) {
 		ctx.fillRect(bgLineX, 0, 1, 600);
@@ -95,7 +94,6 @@
 		for(var i = 0; i < data.players.length; i++) {
 			if(!data.players[i].isDead) {
 				ctx.fillStyle = "hsl(" + data.players[i].color + ", 100%, 50%)";
-
 				if(data.players[i].id == id) {
 					if(!data.gameStarted) {
 						ctx.strokeStyle = "blue";
@@ -131,8 +129,6 @@
 				ctx.fillStyle = "#33FF33";
 			}
 			ctx.fillText("Winner: " + data.lastWinner, 600, 300);
-			console.log("1:"+data.lastWinnerID);
-			console.log("2:"+id);
 		}
 	});
 

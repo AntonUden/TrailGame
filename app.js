@@ -14,7 +14,7 @@ var port = process.env.PORT || 80;
 serv.listen(port);
 var io = require("socket.io")(serv, {});
 
-console.log(colors.green("[Trail Game] Server started on port " + port));
+console.log(colors.green("[Trail Game] Socket started on port " + port));
 
 var SOCKET_LIST = {};
 var PLAYER_LIST = {};
@@ -362,7 +362,6 @@ setInterval(function() {
 				});
 			}
 		}
-
 		for(var t in TRAIL_LIST) {
 			var trail = TRAIL_LIST[t];
 			trailPack.push({
@@ -373,7 +372,6 @@ setInterval(function() {
 				color:trail.color
 			});
 		}
-
 		for(var i in SOCKET_LIST) {
 			var socket = SOCKET_LIST[i];
 			socket.emit("data", {
@@ -392,3 +390,4 @@ setInterval(function() {
 		console.log(colors.red("[Trail Game] (Warning) Crash during main update loop. " + err));
 	}
 },(1000 / 60));
+console.log(colors.green("[Trail Game] Server started "));
