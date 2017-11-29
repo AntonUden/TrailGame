@@ -154,6 +154,43 @@
 		socket.emit("not afk");
 	});
 
+	function canvasClick(e) {
+		var element = canvas;
+		var offsetX = 0, offsetY = 0
+
+		if (element.offsetParent) {
+			do {
+				offsetX += element.offsetLeft;
+				offsetY += element.offsetTop;
+			} while ((element = element.offsetParent));
+		}
+
+		x = (e.pageX - offsetX) - canvas.width / 2;
+		y = (e.pageY - offsetY) - canvas.height / 2;
+		if(x > y && x > 200) {
+			console.log("right");
+			socket.emit('keyPress',{inputId:'right',state:true});
+			setTimeout(function() {socket.emit('keyPress',{inputId:'right',state:false})}, 50);
+		} else if(x < y && x < -200) {
+			console.log("left");
+			socket.emit('keyPress',{inputId:'left',state:true});
+			setTimeout(function() {socket.emit('keyPress',{inputId:'left',state:false})}, 50);
+		}
+		if(y > x && y > 100) {
+			console.log("down");
+			socket.emit('keyPress',{inputId:'down',state:true});
+			setTimeout(function() {socket.emit('keyPress',{inputId:'down',state:false})}, 50);
+		} else if(y < x && y < -100) {
+			console.log("up");
+			socket.emit('keyPress',{inputId:'up',state:true});
+			setTimeout(function() {socket.emit('keyPress',{inputId:'up',state:false})}, 50);
+		}
+		console.log(x + " " + y);
+	}
+
+	canvas.addEventListener("click", canvasClick, false);
+
+
 	document.onkeydown = function(event){
 		if(event.keyCode === 68 || event.keyCode === 39)	//d
 			socket.emit('keyPress',{inputId:'right',state:true});
@@ -174,6 +211,8 @@
 		else if(event.keyCode === 87 || event.keyCode === 38) // w
 			socket.emit('keyPress',{inputId:'up',state:false});
 	}
+
+
 </script>
 </body>
 </html>
