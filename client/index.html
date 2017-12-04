@@ -41,7 +41,7 @@
 	}
 </style>
 </head>
-<body onmousemove="mouseMove(event);">
+<body onmousemove="mouseMove(event);" onclick="mouseClick(event);" id="body">
 <canvas id="ctx" width="1200" height="600" style="border: 1px solid #000000;"></canvas>
 <div id="uiDiv">
 	<input id="nameInput" value="Unnamed" maxlength="16" pattern="[A-Za-z0-9]" required onkeydown = "nameInputKeydown(event)">
@@ -95,6 +95,33 @@
 			name:name
 		});
 		document.getElementById("nameInput").value = name;
+	}
+	function mouseClick(e) {
+		var element = document.getElementById("body");
+		var offsetX = 0, offsetY = 0
+		if (element.offsetParent) {
+			do {
+				offsetX += element.offsetLeft;
+				offsetY += element.offsetTop;
+			} while ((element = element.offsetParent));
+		}
+
+		x = (e.pageX - offsetX) - window.innerWidth / 2;
+		y = (e.pageY - offsetY) - window.innerHeight / 2;
+		if(x > y && x > 200) {
+			socket.emit('keyPress',{inputId:'right',state:true});
+			setTimeout(function() {socket.emit('keyPress',{inputId:'right',state:false})}, 50);
+		} else if(x < y && x < -200) {
+			socket.emit('keyPress',{inputId:'left',state:true});
+			setTimeout(function() {socket.emit('keyPress',{inputId:'left',state:false})}, 50);
+		}
+		if(y > x && y > 100) {
+			socket.emit('keyPress',{inputId:'down',state:true});
+			setTimeout(function() {socket.emit('keyPress',{inputId:'down',state:false})}, 50);
+		} else if(y < x && y < -100) {
+			socket.emit('keyPress',{inputId:'up',state:true});
+			setTimeout(function() {socket.emit('keyPress',{inputId:'up',state:false})}, 50);
+		}
 	}
 
 	socket.on("data", function(data) {
@@ -182,38 +209,6 @@
 	socket.on("afk?", function(data) {
 		socket.emit("not afk");
 	});
-
-	function canvasClick(e) {
-		var element = canvas;
-		var offsetX = 0, offsetY = 0
-
-		if (element.offsetParent) {
-			do {
-				offsetX += element.offsetLeft;
-				offsetY += element.offsetTop;
-			} while ((element = element.offsetParent));
-		}
-
-		x = (e.pageX - offsetX) - canvas.width / 2;
-		y = (e.pageY - offsetY) - canvas.height / 2;
-		if(x > y && x > 200) {
-			socket.emit('keyPress',{inputId:'right',state:true});
-			setTimeout(function() {socket.emit('keyPress',{inputId:'right',state:false})}, 50);
-		} else if(x < y && x < -200) {
-			socket.emit('keyPress',{inputId:'left',state:true});
-			setTimeout(function() {socket.emit('keyPress',{inputId:'left',state:false})}, 50);
-		}
-		if(y > x && y > 100) {
-			socket.emit('keyPress',{inputId:'down',state:true});
-			setTimeout(function() {socket.emit('keyPress',{inputId:'down',state:false})}, 50);
-		} else if(y < x && y < -100) {
-			socket.emit('keyPress',{inputId:'up',state:true});
-			setTimeout(function() {socket.emit('keyPress',{inputId:'up',state:false})}, 50);
-		}
-	}
-
-	canvas.addEventListener("click", canvasClick, false);
-
 
 	document.onkeydown = function(event){
 		if(event.keyCode === 68 || event.keyCode === 39)	//d
