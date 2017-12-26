@@ -3,43 +3,8 @@
 <head>
 <meta name="theme-color" content="#309090" />
 <link rel="icon" href="/client/icon.png">
+<link rel="stylesheet" type="text/css" href="/client/style.css">
 <title>Trail Game</title>
-<style type="text/css">
-	html { 
-		background: url("/client/background.jpg") no-repeat center center fixed; 
-		-webkit-background-size: cover;
-		-moz-background-size: cover;
-		-o-background-size: cover;
-		background-size: cover;
-		overflow: hidden;
-		display: block;
-	}
-
-	#ctx {
-		position: absolute;
-		left: 0px;
-		top: 0px;
-		width: 100%;
-		height: 100%;
-		border:1px solid #000000;
-		z-index:-1;
-	}
-
-	#uiDiv {
-		background-color: rgba(255,255,255,0.6);
-		text-align: center;
-		overflow-y: hidden;
-		position: absolute;
-		z-index: 2;
-		border:1px solid #000000;
-		bottom: 0;
-		right: 0;
-		left: 0;
-		height: 0px;
-		width: 100%;
-		transition: 1s;
-	}
-</style>
 </head>
 <body onmousemove="mouseMove(event);" onclick="mouseClick(event);" id="body">
 <canvas id="ctx" width="1200" height="600" style="border: 1px solid #000000;"></canvas>
