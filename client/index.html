@@ -8,14 +8,14 @@
 </head>
 <body onmousemove="mouseMove(event);" onclick="mouseClick(event);" id="body">
 <canvas id="ctx" width="1200" height="600" style="border: 1px solid #000000;"></canvas>
-<div id=menuTextDiv>
+<div id="menuTextDiv" class="noselect">
 	Menu
 </div>
-<div id="uiDiv">
-	<input id="nameInput" value="Unnamed" maxlength="16" pattern="[A-Za-z0-9]" required onkeydown = "nameInputKeydown(event)">
-	<button id="setName" onclick="changeName()">Set name</button>
-	<a href="https://github.com/Zeeraa/TrailGame" target="_blank">Source code</a>
-	<input type="checkbox" id="mlock">Lock menu
+<div id="uiDiv" class="noselect">
+	<input id="nameInput" value="Unnamed" maxlength="16" pattern="[A-Za-z0-9]" required onkeydown = "nameInputKeydown(event)" class="shadow">
+	<button id="setName" onclick="changeName()" class="shadow">Set name</button>
+	<a href="https://github.com/Zeeraa/TrailGame" target="_blank" class="shadow">Source code</a>
+	<input type="checkbox" id="mlock" class="shadow">Lock menu
 </div>
 <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 <script>
