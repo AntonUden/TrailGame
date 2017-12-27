@@ -8,13 +8,18 @@
 </head>
 <body onmousemove="mouseMove(event);" onclick="mouseClick(event);" id="body">
 <canvas id="ctx" width="1200" height="600" style="border: 1px solid #000000;"></canvas>
+<div id=menuTextDiv>
+	Menu
+</div>
 <div id="uiDiv">
 	<input id="nameInput" value="Unnamed" maxlength="16" pattern="[A-Za-z0-9]" required onkeydown = "nameInputKeydown(event)">
 	<button id="setName" onclick="changeName()">Set name</button>
 	<a href="https://github.com/Zeeraa/TrailGame" target="_blank">Source code</a>
+	<input type="checkbox" id="mlock">Lock menu
 </div>
 <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 <script>
+	var uiVisible = false;
 	var uiDiv = document.getElementById("uiDiv");
 	var canvas = document.getElementById('ctx');
 	var ctx = canvas.getContext("2d");
@@ -197,13 +202,17 @@
 	}
 
 	function mouseMove(e) {
-		if(e.clientY < window.innerHeight - 50 && uiVisible) {
-			uiVisible = false;
+		mx = Math.round(e.clientX / window.innerWidth * 1200);
+		my = Math.round(e.clientY / window.innerHeight * 600);
+		if(e.clientY < window.innerHeight - 70 && uiVisible && !document.getElementById("mlock").checked) {
 			unfocus();
+			uiVisible = false;
 			uiDiv.style.height = "0px";
-		} else if(e.clientY > window.innerHeight - 25 && !uiVisible) {
+			document.getElementById("menuTextDiv").style.height = "20px";
+		} else if(e.clientY > window.innerHeight - 40 && !uiVisible) {
 			uiVisible = true;
-			uiDiv.style.height = "35px";
+			document.getElementById("menuTextDiv").style.height = "0px";
+			uiDiv.style.height = "55px";
 		}
 	}
 	function unfocus(){
