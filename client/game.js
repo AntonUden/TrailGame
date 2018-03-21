@@ -178,11 +178,6 @@ socket.on("newName", function(data) {
     document.getElementById("nameInput").value = data.name;
 });
 
-socket.on("newName", function(data) {
-    console.log("Sever changed your name to " + data.name);
-    document.getElementById("nameInput").value = data.name;
-});
-
 socket.on("id", function(data) {
     console.log("Your id is " + data.id);
     id = data.id;

@@ -2,6 +2,11 @@ var express = require('express');
 var app = express();
 var serv = require('http').Server(app);
 var colors = require('colors/safe');
+var wildcard = require('socketio-wildcard')();
+
+//---------- Server settings ----------
+var MAX_SOCKET_ACTIVITY_PER_SECOND = 500;
+//-------------------------------------
 
 console.log(colors.green("[Trail Game] Starting server..."));
 
@@ -13,11 +18,13 @@ app.use('/client', express.static(__dirname + '/client'));
 var port = process.env.PORT || 80;
 serv.listen(port);
 var io = require("socket.io")(serv, {});
+io.use(wildcard);
 
 if(process.env.PORT == undefined)
     console.log(colors.blue("[jsShooter] no port defined using default (80)"));
 console.log(colors.green("[Trail Game] Socket started on port " + port));
 
+var SOCKET_ACTIVITY = {};
 var SOCKET_LIST = {};
 var PLAYER_LIST = {};
 var TRAIL_LIST = {};
@@ -181,8 +188,17 @@ function getTrailByID(id) {
     }
 }
 
+function disconnectSocket(id) {
+    SOCKET_LIST[id].disconnect();
+    delete SOCKET_LIST[id];
+    delete SOCKET_ACTIVITY[id];
+}
+
 io.sockets.on("connection", function(socket) {
     socket.id = Math.random();
+    if(SOCKET_ACTIVITY[socket.id] == undefined) {
+        SOCKET_ACTIVITY[socket.id] = 0;
+    }
     SOCKET_LIST[socket.id] = socket;
     var player = Player(socket.id);
     if (gameStarted) {
@@ -199,14 +215,24 @@ io.sockets.on("connection", function(socket) {
 
     // Player disconnect
     socket.on("disconnect", function() {
-        delete SOCKET_LIST[socket.id];
         delete PLAYER_LIST[socket.id];
+        disconnectSocket(socket.id);
         console.log(colors.cyan("[Trail Game] Player with id " + socket.id + " disconnected"));
     });
 
     // Player name change
     socket.on('changeName', function(data) {
         try {
+            if(data.name.length > 64) { // Name is way too long. Kick the player for sending too much data
+                console.log(colors.red("[Trail Game] Player with id " + socket.id + " tried to change name to " + data.name + " but it is longer than 64 chars. Disconnecting socket"));
+                disconnectSocket(socket.id);
+                return;
+            }
+
+            if(data.name.length > 16) { // Name is too long
+                return;
+            }
+
             var player = getPlayerByID(socket.id);
             player.name = data.name;
             socket.emit("newName", {
@@ -255,9 +281,30 @@ io.sockets.on("connection", function(socket) {
         } catch (err) {}
     });
 
+    socket.on("*", function(data) {
+        try {
+            SOCKET_ACTIVITY[socket.id]++;
+            //console.log(data);
+        } catch(err) {}
+    });
+
 });
 
 setInterval(function() {
+    for(var sa in SOCKET_ACTIVITY) {
+            if(isNaN(SOCKET_ACTIVITY[sa])) {
+            delete SOCKET_ACTIVITY[sa];
+            break;
+        }
+
+        if(SOCKET_ACTIVITY[sa] > MAX_SOCKET_ACTIVITY_PER_SECOND) {
+            console.log(colors.red("[Trail Game] Kicked " + sa + " Too high network activity. " + SOCKET_ACTIVITY[sa] + " > " + MAX_SOCKET_ACTIVITY_PER_SECOND + " Messages in 1 second"));
+            delete PLAYER_LIST[sa];
+            disconnectSocket(sa);
+        } else {
+            SOCKET_ACTIVITY[sa] = 0;
+        }
+    }
     for (var i in SOCKET_LIST) {
         var socket = SOCKET_LIST[i];
         socket.emit("afk?", {});
@@ -274,7 +321,7 @@ setInterval(function() {
         }
         if (player.joinKickTimeout == 0 || player.afkKickTimeout <= 0) {
             delete PLAYER_LIST[player.id];
-            delete SOCKET_LIST[player.id];
+            disconnectSocket(socket.id);
             console.log(colors.red("[Trail Game] Kicked " + player.id + " for inactivity"));
         }
     }
