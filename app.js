@@ -321,7 +321,7 @@ setInterval(function() {
         }
         if (player.joinKickTimeout == 0 || player.afkKickTimeout <= 0) {
             delete PLAYER_LIST[player.id];
-            disconnectSocket(socket.id);
+            disconnectSocket(player.id);
             console.log(colors.red("[Trail Game] Kicked " + player.id + " for inactivity"));
         }
     }
