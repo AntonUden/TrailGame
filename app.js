@@ -53,7 +53,7 @@ var Player = function(id) {
         mx: 0,
         my: 0,
         id: id,
-        afkKickTimeout: 100,
+        afkKickTimeout: 40,
         currentTrail: -1,
         joinKickTimeout: 30,
         pressingRight: false,
