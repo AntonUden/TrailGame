@@ -14,11 +14,11 @@
     "url": "git+https://github.com/Zeeraa/TrailGame.git"
   },
   "dependencies": {
-    "colors": "1.1.2",
-    "express": "4.15.5",
-    "ws": "3.2.0",
-    "socketio-wildcard": "2.0.0",
-    "socket.io": "2.0.3"
+    "colors": "^1.1.2",
+    "express": "^4.15.5",
+    "socket.io": "^2.0.4",
+    "socketio-wildcard": "^2.0.0",
+    "ws": "3.2.0"
   },
   "keywords": [],
   "author": "",
