@@ -345,7 +345,6 @@ setInterval(function() {
 	if (inCountdown) {
 		if (countdown > 0) {
 			countdown--;
-			console.log(colors.yellow("[Trail Game] Starting in " + countdown));
 		}
 		if (countdown <= 0) {
 			console.log(colors.yellow("[Trail Game] Round started"));
