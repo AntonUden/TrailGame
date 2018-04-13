@@ -154,18 +154,27 @@ var Player = function(id) {
 			}
 		}
 	}
-	if (Boolean(Math.round(Math.random()))) {
-		if (Boolean(Math.round(Math.random()))) {
+
+	switch(Math.floor(Math.random() * 4)) {
+		case 0:
 			self.mx = 1;
-		} else {
+			break;
+
+		case 1:
 			self.mx = -1;
-		}
-	} else {
-		if (Boolean(Math.round(Math.random()))) {
+			break;
+
+		case 2:
 			self.my = 1;
-		} else {
+			break;
+
+		case 3:
 			self.my = -1;
-		}
+			break;
+
+		default:
+			self.mx = 1;
+			break;
 	}
 
 	return self;
