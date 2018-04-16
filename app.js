@@ -15,6 +15,7 @@ app.get('/', function(req, res) {
 });
 app.use('/client', express.static(__dirname + '/client'));
 
+var sendData = true;
 var port = process.env.PORT || 80;
 serv.listen(port);
 var io = require("socket.io")(serv, {});
@@ -432,30 +433,33 @@ setInterval(function() {
 				});
 			}
 		}
-		for (var t in TRAIL_LIST) {
-			var trail = TRAIL_LIST[t];
-			trailPack.push({
-				x: trail.x,
-				y: trail.y,
-				endX: trail.endX,
-				endY: trail.endY,
-				color: trail.color
-			});
+		if(sendData) {
+			for (var t in TRAIL_LIST) {
+				var trail = TRAIL_LIST[t];
+				trailPack.push({
+					x: trail.x,
+					y: trail.y,
+					endX: trail.endX,
+					endY: trail.endY,
+					color: trail.color
+				});
+			}
+			for (var i in SOCKET_LIST) {
+				var socket = SOCKET_LIST[i];
+				socket.emit("data", {
+					players: playerPack,
+					trails: trailPack,
+					countdown: countdown,
+					gameStarted: gameStarted,
+					inCountdown: inCountdown,
+					waiting: waiting,
+					onlinePlayers: onlinePlayers,
+					lastWinner: lastWinner,
+					lastWinnerID: lastWinnerID
+				});
+			}
 		}
-		for (var i in SOCKET_LIST) {
-			var socket = SOCKET_LIST[i];
-			socket.emit("data", {
-				players: playerPack,
-				trails: trailPack,
-				countdown: countdown,
-				gameStarted: gameStarted,
-				inCountdown: inCountdown,
-				waiting: waiting,
-				onlinePlayers: onlinePlayers,
-				lastWinner: lastWinner,
-				lastWinnerID: lastWinnerID
-			});
-		}
+		sendData = !sendData;
 	} catch (err) {
 		console.log(colors.red("[Trail Game] (Warning) Crash during main update loop. " + err));
 	}
