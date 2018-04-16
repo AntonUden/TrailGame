@@ -238,10 +238,7 @@ io.sockets.on("connection", function(socket) {
 				disconnectSocket(socket.id);
 				return;
 			}
-
-			data.name = data.name.replace(/[\u{0080}-\u{FFFF}]/gu,"");
-
-			if(data.name.length > 16) { // Name is too long
+			if(data.name.length > 16 || data.name.length < 1) { // Name is too long or too short
 				return;
 			}
 
