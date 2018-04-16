@@ -11,10 +11,13 @@
 <div id="menuTextDiv" class="noselect">
 	Menu
 </div>
-<div id="winnerList" class="noselect">
-	<h3>Winners</h3>
-	<div id="winners"></div>
-</div>
+<table id="winners">
+	<tr>
+		<th>
+			Latest winners
+		</th>
+	</tr>
+</table>
 <div id="uiDiv" class="noselect">
 	<input id="nameInput" value="Unnamed" maxlength="16" pattern="[A-Za-z0-9]" required onkeydown = "nameInputKeydown(event)" class="shadow">
 	<button id="setName" onclick="changeName()" class="shadow">Set name</button>

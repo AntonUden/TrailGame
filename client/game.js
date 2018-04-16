@@ -110,12 +110,9 @@ function mouseClick(e) {
 }
 
 socket.on("winners", function(data) {
-	var newText = "";
+	var newText = "<tr><th>Latest winners</th></tr>";
 	while(data.list.length > 0) {
-		newText+=data.list.pop();
-		if(data.list.length > 0) {
-			newText+="<br>";
-		}
+		newText+="<tr><td>" + data.list.pop() + "</td></tr>";	
 	}
     document.getElementById("winners").innerHTML = newText;
 });
