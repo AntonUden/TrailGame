@@ -22,7 +22,7 @@ var io = require("socket.io")(serv, {});
 io.use(wildcard);
 
 if(process.env.PORT == undefined)
-	console.log(colors.blue("[jsShooter] no port defined using default (80)"));
+	console.log(colors.blue("[Trail Game] no port defined using default (80)"));
 console.log(colors.green("[Trail Game] Socket started on port " + port));
 
 var WinnerList = [];
