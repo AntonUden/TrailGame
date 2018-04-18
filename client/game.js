@@ -111,8 +111,10 @@ function mouseClick(e) {
 
 socket.on("winners", function(data) {
 	var newText = "<tr><th>Latest winners</th></tr>";
+	var h = 100;
 	while(data.list.length > 0) {
-		newText+='<tr><td id="winnerTD">' + data.list.pop() + '</td></tr>';	
+		newText+='<tr><td id="winnerTD" style="color: hsl(' + h + ', 100%, 30%)">' + data.list.pop() + '</td></tr>';
+		h-=10;
 	}
     document.getElementById("winners").innerHTML = newText;
 });
