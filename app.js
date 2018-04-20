@@ -64,6 +64,7 @@ var Player = function(id) {
 		pressingDown: false,
 		isDead: false,
 		color: Math.floor(Math.random() * 360),
+		animatedColor: false,
 		name: "Unnamed player"
 	}
 
@@ -83,73 +84,87 @@ var Player = function(id) {
 	}
 
 	self.update = function() {
-		if (gameStarted && !self.isDead) {
-			var lmx = self.mx;
-			var lmy = self.my;
-
-			if (self.pressingRight && self.mx != -1) {
-				self.mx = 1;
-				self.my = 0;
-			} else if (self.pressingLeft && self.mx != 1) {
-				self.mx = -1;
-				self.my = 0;
-			} else if (self.pressingUp && self.my != 1) {
-				self.mx = 0;
-				self.my = -1;
-			} else if (self.pressingDown && self.my != -1) {
-				self.mx = 0;
-				self.my = 1;
-			}
-
-			var trail = getTrailByID(self.currentTrail);
-			if (trail != undefined) {
-				if (lmx != self.mx || lmy != self.my) {
-					trail.endX = self.x;
-					trail.endY = self.y;
-					var trailID = (Math.random() * 100);
-					TRAIL_LIST[trailID] = Trail(trailID, self.x, self.y);
-					TRAIL_LIST[trailID].color = self.color;
-					self.currentTrail = trailID;
-				} else {
-					trail.endX = self.x;
-					trail.endY = self.y;
+		if(!self.isDead) {
+			if(self.animatedColor) {
+				self.color+=2;
+				if(self.color > 360) {
+					self.color = 0;
 				}
-			} else {}
-			self.x += self.mx;
-			self.y += self.my;
-
-			if (self.x < 0 || self.x > 1200 || self.y < 0 || self.y > 600) {
-				self.isDead = true;
+				if(self.currentTrail != -1) {
+					if(TRAIL_LIST[self.currentTrail] != undefined) {
+						TRAIL_LIST[self.currentTrail].color = self.color;
+					}
+				}
 			}
+			if (gameStarted) {
+				var lmx = self.mx;
+				var lmy = self.my;
 
-			for (var tra in TRAIL_LIST) {
-				var trail = TRAIL_LIST[tra];
-				if (trail.id != self.currentTrail) {
-					var colission = 0;
-					if (trail.endX > trail.x) {
-						if (self.x >= trail.x && self.x <= trail.endX) {
-							colission++;
-						}
-					} else if (trail.endX < trail.x) {
-						if (self.x <= trail.x && self.x >= trail.endX) {
-							colission++;
-						}
-					} else if (self.x == trail.x || self.x == trail.endX) {
-						colission++;
+				if (self.pressingRight && self.mx != -1) {
+					self.mx = 1;
+					self.my = 0;
+				} else if (self.pressingLeft && self.mx != 1) {
+					self.mx = -1;
+					self.my = 0;
+				} else if (self.pressingUp && self.my != 1) {
+					self.mx = 0;
+					self.my = -1;
+				} else if (self.pressingDown && self.my != -1) {
+					self.mx = 0;
+					self.my = 1;
+				}
+
+				var trail = getTrailByID(self.currentTrail);
+				if (trail != undefined) {
+					if (lmx != self.mx || lmy != self.my) {
+						trail.endX = self.x;
+						trail.endY = self.y;
+						var trailID = (Math.random() * 100);
+						TRAIL_LIST[trailID] = Trail(trailID, self.x, self.y);
+						TRAIL_LIST[trailID].color = self.color;
+						self.currentTrail = trailID;
+					} else {
+						trail.endX = self.x;
+						trail.endY = self.y;
 					}
-					if (trail.endY > trail.y) {
-						if (self.y >= trail.y && self.y <= trail.endY) {
+				} else {}
+				self.x += self.mx;
+				self.y += self.my;
+
+				if (self.x < 0 || self.x > 1200 || self.y < 0 || self.y > 600) {
+					self.isDead = true;
+				}
+
+				for (var tra in TRAIL_LIST) {
+					var trail = TRAIL_LIST[tra];
+					if (trail.id != self.currentTrail) {
+						var colission = 0;
+						if (trail.endX > trail.x) {
+							if (self.x >= trail.x && self.x <= trail.endX) {
+								colission++;
+							}
+						} else if (trail.endX < trail.x) {
+							if (self.x <= trail.x && self.x >= trail.endX) {
+								colission++;
+							}
+						} else if (self.x == trail.x || self.x == trail.endX) {
 							colission++;
 						}
-					} else if (trail.endY < trail.y) {
-						if (self.y <= trail.y && self.y >= trail.endY) {
+						if (trail.endY > trail.y) {
+							if (self.y >= trail.y && self.y <= trail.endY) {
+								colission++;
+							}
+						} else if (trail.endY < trail.y) {
+							if (self.y <= trail.y && self.y >= trail.endY) {
+								colission++;
+							}
+						} else if (self.y == trail.y || self.y == trail.endY) {
 							colission++;
 						}
-					} else if (self.y == trail.y || self.y == trail.endY) {
-						colission++;
-					}
-					if (colission == 2) {
-						self.isDead = true;
+						if (colission == 2) {
+							self.isDead = true;
+							this.currentTrail = -1;
+						}
 					}
 				}
 			}
@@ -242,6 +257,9 @@ io.sockets.on("connection", function(socket) {
 
 			var player = getPlayerByID(socket.id);
 			player.name = data.name;
+			if(player.name == "RGB") {
+				player.animatedColor = true;
+			}
 			socket.emit("newName", {
 				name: player.name
 			});
