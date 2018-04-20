@@ -220,9 +220,6 @@ io.sockets.on("connection", function(socket) {
 	socket.emit("id", {
 		id: socket.id
 	});
-	socket.emit("newName", {
-		name: player.name
-	});
 
 	// Player disconnect
 	socket.on("disconnect", function() {

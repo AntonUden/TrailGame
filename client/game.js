@@ -45,6 +45,7 @@ function changeName() {
 	socket.emit("changeName", {
 		name: name
 	});
+	setCookie("trailgame_name", name, 60);
 	document.getElementById("nameInput").value = name;
 }
 
@@ -266,3 +267,17 @@ function unfocus() {
 	tmp.focus();
 	document.body.removeChild(tmp);
 }
+
+try {
+	if(getCookie("trailgame_name") != "") {
+		if(getCookie("trailgame_name").length > 18) {
+			console.error("[Warning] Name stored in cookie is too long. resetting to Unnamed player");
+			setCookie("trailgame_name", "Unnamed player", 360);
+		}
+		document.getElementById("nameInput").value = getCookie("trailgame_name");
+		document.getElementById('setName').click();
+	} else {
+		console.error("Creating cookie for name");
+		setCookie("trailgame_name", "Unnamed player", 360);
+	}
+} catch(err) {}
