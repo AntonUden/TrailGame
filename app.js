@@ -26,6 +26,7 @@ if(process.env.PORT == undefined)
 console.log(colors.green("[Trail Game] Socket started on port " + port));
 
 var WinnerList = [];
+
 var SOCKET_ACTIVITY = {};
 var SOCKET_LIST = {};
 var PLAYER_LIST = {};
@@ -315,18 +316,7 @@ io.sockets.on("connection", function(socket) {
 
 });
 
-setInterval(function() {
-	if(WinnerList.length > 10) {
-		WinnerList.shift();
-	}
-	for (var i in SOCKET_LIST) {
-		var socket = SOCKET_LIST[i];
-		socket.emit("winners", {
-			list:WinnerList
-		});
-	}
-}, 1000);
-
+// Socket activity, countdown and winner list loop 
 setInterval(function() {
 	for(var sa in SOCKET_ACTIVITY) {
 			if(isNaN(SOCKET_ACTIVITY[sa])) {
@@ -342,13 +332,36 @@ setInterval(function() {
 			SOCKET_ACTIVITY[sa] = 0;
 		}
 	}
+
 	for (var i in SOCKET_LIST) {
 		var socket = SOCKET_LIST[i];
 		socket.emit("afk?", {});
 	}
+
+	if(WinnerList.length > 10) {
+		WinnerList.shift();
+	}
+	
+	for (var i in SOCKET_LIST) {
+		var socket = SOCKET_LIST[i];
+		socket.emit("winners", {
+			list:WinnerList
+		});
+	}
+
+	if (inCountdown) {
+		if (countdown > 0) {
+			countdown--;
+		}
+		if (countdown <= 0) {
+			console.log(colors.yellow("[Trail Game] Round started"));
+			inCountdown = false;
+			gameStarted = true;
+		}
+	}
 }, 1000);
 
-// Player afk kick loop
+// Player afk kick loop and countdown
 setInterval(function() {
 	for (var p in PLAYER_LIST) {
 		var player = PLAYER_LIST[p];
@@ -363,20 +376,6 @@ setInterval(function() {
 		}
 	}
 }, 100);
-
-// Countdown loop
-setInterval(function() {
-	if (inCountdown) {
-		if (countdown > 0) {
-			countdown--;
-		}
-		if (countdown <= 0) {
-			console.log(colors.yellow("[Trail Game] Round started"));
-			inCountdown = false;
-			gameStarted = true;
-		}
-	}
-}, 1000);
 
 // Main update loop
 setInterval(function() {
