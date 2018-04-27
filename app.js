@@ -64,6 +64,7 @@ var Player = function(id) {
 		pressingUp: false,
 		pressingDown: false,
 		isDead: false,
+		hasJoined: true,
 		color: Math.floor(Math.random() * 360),
 		animatedColor: false,
 		name: "Unnamed player"
@@ -229,6 +230,7 @@ io.sockets.on("connection", function(socket) {
 	SOCKET_LIST[socket.id] = socket;
 	var player = Player(socket.id);
 	if (gameStarted) {
+		player.hasJoined = false;
 		player.isDead = true;
 	}
 	PLAYER_LIST[socket.id] = player;
@@ -422,6 +424,8 @@ setInterval(function() {
 						WinnerList.push(player.name.replace("<", "&lt;").replace(">", "&gt;"));
 						lastWinner = player.name;
 						lastWinnerID = player.id;
+					} else {
+						lastWinner = "(Error: player not found)";
 					}
 					player.respawn();
 				}
@@ -443,6 +447,7 @@ setInterval(function() {
 					id: player.id,
 					color: player.color,
 					isDead: player.isDead,
+					hasJoined: player.hasJoined,
 					name: player.name
 				});
 			}

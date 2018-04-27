@@ -144,6 +144,17 @@ socket.on("data", function(data) {
 	}
 
 	for (var i = 0; i < data.players.length; i++) {
+		if (data.players[i].id == id && data.players[i].isDead) {
+			ctx.font = "20px Arial";
+			if(data.players[i].hasJoine) {
+				ctx.fillStyle = "#AA0000";
+				ctx.fillText("You are dead", 600, 30);
+			} else {
+				ctx.fillStyle = "#000000";
+				ctx.fillText("You will be connected next round", 600, 30);
+			}
+		}
+
 		if (!data.players[i].isDead) {
 			ctx.fillStyle = "hsl(" + data.players[i].color + ", 100%, 50%)";
 			if (data.players[i].id == id) {
