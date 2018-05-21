@@ -9,10 +9,10 @@ ctx.fillRect(0, 0, 1200, 600);
 ctx.textAlign = "center";
 ctx.fillStyle = "#BBBBBB";
 
-for (var bgLineX = 0; bgLineX < 1200; bgLineX += 20) {
+for (let bgLineX = 0; bgLineX < 1200; bgLineX += 20) {
 	ctx.fillRect(bgLineX, 0, 1, 600);
 }
-for (var bgLineY = 0; bgLineY < 600; bgLineY += 20) {
+for (let bgLineY = 0; bgLineY < 600; bgLineY += 20) {
 	ctx.fillRect(0, bgLineY, 1200, 1);
 }
 
@@ -37,7 +37,7 @@ function nameInputKeydown(event) {
 }
 
 function changeName() {
-	var name = "" + document.getElementById("nameInput").value;
+	let name = "" + document.getElementById("nameInput").value;
 	if (name == "") {
 		name = "Unnamed";
 	}
@@ -50,8 +50,8 @@ function changeName() {
 }
 
 function mouseClick(e) {
-	var element = document.getElementById("body");
-	var offsetX = 0,
+	let element = document.getElementById("body");
+	let offsetX = 0,
 		offsetY = 0
 	if (element.offsetParent) {
 		do {
@@ -111,8 +111,8 @@ function mouseClick(e) {
 }
 
 socket.on("winners", function(data) {
-	var newText = "<tr><th>Latest winners</th></tr>";
-	var h = 100;
+	let newText = "<tr><th>Latest winners</th></tr>";
+	let h = 100;
 	while(data.list.length > 0) {
 		newText+='<tr><td id="winnerTD" style="color: hsl(' + h + ', 100%, 30%)">' + data.list.pop() + '</td></tr>';
 		h-=10;
@@ -128,14 +128,14 @@ socket.on("data", function(data) {
 	ctx.font = "10px Arial";
 
 	ctx.fillStyle = "#BBBBBB";
-	for (var bgLineX = 0; bgLineX < 1200; bgLineX += 20) {
+	for (let bgLineX = 0; bgLineX < 1200; bgLineX += 20) {
 		ctx.fillRect(bgLineX, 0, 1, 600);
 	}
-	for (var bgLineY = 0; bgLineY < 600; bgLineY += 20) {
+	for (let bgLineY = 0; bgLineY < 600; bgLineY += 20) {
 		ctx.fillRect(0, bgLineY, 1200, 1);
 	}
 
-	for (var i = 0; i < data.trails.length; i++) {
+	for (let i = 0; i < data.trails.length; i++) {
 		ctx.strokeStyle = "hsl(" + data.trails[i].color + ", 100%, 50%)";
 		ctx.beginPath();
 		ctx.moveTo(data.trails[i].x, data.trails[i].y);
@@ -143,7 +143,7 @@ socket.on("data", function(data) {
 		ctx.stroke();
 	}
 
-	for (var i = 0; i < data.players.length; i++) {
+	for (let i = 0; i < data.players.length; i++) {
 		if (data.players[i].id == id && data.players[i].isDead) {
 			ctx.font = "20px Arial";
 			if(data.players[i].hasJoine) {
@@ -276,7 +276,7 @@ var isRgb = false;
 function rgb() {
 	if(!isRgb) {
 		isRgb = true;
-		var oldName = document.getElementById("nameInput").value;
+		let oldName = document.getElementById("nameInput").value;
 		socket.emit("changeName", {name:"RGB"});
 		document.getElementById("nameInput").value = oldName;
 		document.getElementById('setName').click();
@@ -284,7 +284,7 @@ function rgb() {
 }
 
 function unfocus() {
-	var tmp = document.createElement("input");
+	let tmp = document.createElement("input");
 	document.body.appendChild(tmp);
 	tmp.focus();
 	document.body.removeChild(tmp);

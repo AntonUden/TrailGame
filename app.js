@@ -79,7 +79,7 @@ var Player = function(id) {
 		self.pressingLeft = false;
 		self.pressingUp = false;
 		self.pressingDown = false;
-		var trailID = (Math.random() * 100);
+		let trailID = (Math.random() * 100);
 		TRAIL_LIST[trailID] = Trail(trailID, self.x, self.y);
 		TRAIL_LIST[trailID].color = self.color;
 		self.currentTrail = trailID;
@@ -99,8 +99,8 @@ var Player = function(id) {
 				}
 			}
 			if (gameStarted) {
-				var lmx = self.mx;
-				var lmy = self.my;
+				let lmx = self.mx;
+				let lmy = self.my;
 
 				if (self.pressingRight && self.mx != -1) {
 					self.mx = 1;
@@ -116,12 +116,12 @@ var Player = function(id) {
 					self.my = 1;
 				}
 
-				var trail = getTrailByID(self.currentTrail);
+				let trail = getTrailByID(self.currentTrail);
 				if (trail != undefined) {
 					if (lmx != self.mx || lmy != self.my) {
 						trail.endX = self.x;
 						trail.endY = self.y;
-						var trailID = (Math.random() * 100);
+						let trailID = (Math.random() * 100);
 						TRAIL_LIST[trailID] = Trail(trailID, self.x, self.y);
 						TRAIL_LIST[trailID].color = self.color;
 						self.currentTrail = trailID;
@@ -137,33 +137,33 @@ var Player = function(id) {
 					self.isDead = true;
 				}
 
-				for (var tra in TRAIL_LIST) {
-					var trail = TRAIL_LIST[tra];
+				for (let tr in TRAIL_LIST) {
+					let trail = TRAIL_LIST[tr];
 					if (trail.id != self.currentTrail) {
-						var colission = 0;
+						let collision = 0;
 						if (trail.endX > trail.x) {
 							if (self.x >= trail.x && self.x <= trail.endX) {
-								colission++;
+								collision++;
 							}
 						} else if (trail.endX < trail.x) {
 							if (self.x <= trail.x && self.x >= trail.endX) {
-								colission++;
+								collision++;
 							}
 						} else if (self.x == trail.x || self.x == trail.endX) {
-							colission++;
+							collision++;
 						}
 						if (trail.endY > trail.y) {
 							if (self.y >= trail.y && self.y <= trail.endY) {
-								colission++;
+								collision++;
 							}
 						} else if (trail.endY < trail.y) {
 							if (self.y <= trail.y && self.y >= trail.endY) {
-								colission++;
+								collision++;
 							}
 						} else if (self.y == trail.y || self.y == trail.endY) {
-							colission++;
+							collision++;
 						}
-						if (colission == 2) {
+						if (collision == 2) {
 							self.isDead = true;
 							this.currentTrail = -1;
 						}
@@ -199,8 +199,8 @@ var Player = function(id) {
 }
 
 function getPlayerByID(id) {
-	for (var p in PLAYER_LIST) {
-		var player = PLAYER_LIST[p];
+	for (let p in PLAYER_LIST) {
+		let player = PLAYER_LIST[p];
 		if (player.id == id) {
 			return player;
 		}
@@ -208,8 +208,8 @@ function getPlayerByID(id) {
 }
 
 function getTrailByID(id) {
-	for (var t in TRAIL_LIST) {
-		var trail = TRAIL_LIST[t];
+	for (let t in TRAIL_LIST) {
+		let trail = TRAIL_LIST[t];
 		if (trail.id == id) {
 			return trail;
 		}
@@ -228,7 +228,7 @@ io.sockets.on("connection", function(socket) {
 		SOCKET_ACTIVITY[socket.id] = 0;
 	}
 	SOCKET_LIST[socket.id] = socket;
-	var player = Player(socket.id);
+	let player = Player(socket.id);
 	if (gameStarted) {
 		player.hasJoined = false;
 		player.isDead = true;
@@ -258,7 +258,7 @@ io.sockets.on("connection", function(socket) {
 				return;
 			}
 
-			var player = getPlayerByID(socket.id);
+			let player = getPlayerByID(socket.id);
 			player.name = data.name;
 			if(player.name == "RGB") {
 				player.animatedColor = true;
@@ -271,7 +271,7 @@ io.sockets.on("connection", function(socket) {
 
 	socket.on('not afk', function(data) {
 		try {
-			var player = getPlayerByID(socket.id);
+			let player = getPlayerByID(socket.id);
 			player.afkKickTimeout = 100;
 		} catch (err) {}
 	});
@@ -293,12 +293,12 @@ io.sockets.on("connection", function(socket) {
 	// Player verification
 	socket.on('kthx', function(data) {
 		try {
-			var player = getPlayerByID(socket.id);
+			let player = getPlayerByID(socket.id);
 			if (!(player == undefined)) {
 				if (player.joinKickTimeout != -1) {
 					player.joinKickTimeout = -1;
 					if (!player.isDead) {
-						var trailID = (Math.random() * 100);
+						let trailID = (Math.random() * 100);
 						TRAIL_LIST[trailID] = Trail(trailID, player.x, player.y);
 						TRAIL_LIST[trailID].color = player.color;
 						player.currentTrail = trailID;
@@ -320,7 +320,7 @@ io.sockets.on("connection", function(socket) {
 
 // Socket activity, countdown and winner list loop 
 setInterval(function() {
-	for(var sa in SOCKET_ACTIVITY) {
+	for(let sa in SOCKET_ACTIVITY) {
 			if(isNaN(SOCKET_ACTIVITY[sa])) {
 			delete SOCKET_ACTIVITY[sa];
 			break;
@@ -335,8 +335,8 @@ setInterval(function() {
 		}
 	}
 
-	for (var i in SOCKET_LIST) {
-		var socket = SOCKET_LIST[i];
+	for (let i in SOCKET_LIST) {
+		let socket = SOCKET_LIST[i];
 		socket.emit("afk?", {});
 	}
 
@@ -344,8 +344,8 @@ setInterval(function() {
 		WinnerList.shift();
 	}
 	
-	for (var i in SOCKET_LIST) {
-		var socket = SOCKET_LIST[i];
+	for (let i in SOCKET_LIST) {
+		let socket = SOCKET_LIST[i];
 		socket.emit("winners", {
 			list:WinnerList
 		});
@@ -365,8 +365,8 @@ setInterval(function() {
 
 // Player afk kick loop and countdown
 setInterval(function() {
-	for (var p in PLAYER_LIST) {
-		var player = PLAYER_LIST[p];
+	for (let p in PLAYER_LIST) {
+		let player = PLAYER_LIST[p];
 		player.afkKickTimeout--;
 		if (player.joinKickTimeout > 0) {
 			player.joinKickTimeout--;
@@ -394,9 +394,9 @@ setInterval(function() {
 		}
 
 		if (gameStarted) {
-			var playersAlive = 0;
-			for (var p in PLAYER_LIST) {
-				var player = PLAYER_LIST[p];
+			let playersAlive = 0;
+			for (let p in PLAYER_LIST) {
+				let player = PLAYER_LIST[p];
 				if (!player.isDead) {
 					playersAlive++;
 				}
@@ -413,12 +413,12 @@ setInterval(function() {
 					inCountdown = true;
 					countdown = 10;
 				}, 3000);
-				for (var i in TRAIL_LIST) {
+				for (let i in TRAIL_LIST) {
 					delete TRAIL_LIST[i];
 				}
 				lastWinner = "None";
-				for (var p in PLAYER_LIST) {
-					var player = PLAYER_LIST[p];
+				for (let p in PLAYER_LIST) {
+					let player = PLAYER_LIST[p];
 					if (!player.isDead) {
 						console.log(colors.yellow("[Trail Game] Winner: " + player.name + " ID: " + player.id));
 						WinnerList.push(player.name.replace("<", "&lt;").replace(">", "&gt;"));
@@ -432,12 +432,12 @@ setInterval(function() {
 			}
 		}
 
-		var playerPack = [];
-		var trailPack = [];
+		let playerPack = [];
+		let trailPack = [];
 
-		var onlinePlayers = Object.keys(PLAYER_LIST).length;
-		for (var p in PLAYER_LIST) {
-			var player = PLAYER_LIST[p];
+		let onlinePlayers = Object.keys(PLAYER_LIST).length;
+		for (let p in PLAYER_LIST) {
+			let player = PLAYER_LIST[p];
 			player.update();
 
 			if (player.joinKickTimeout < 0) {
@@ -453,8 +453,8 @@ setInterval(function() {
 			}
 		}
 		if(sendData) {
-			for (var t in TRAIL_LIST) {
-				var trail = TRAIL_LIST[t];
+			for (let t in TRAIL_LIST) {
+				let trail = TRAIL_LIST[t];
 				trailPack.push({
 					x: trail.x,
 					y: trail.y,
@@ -463,8 +463,8 @@ setInterval(function() {
 					color: trail.color
 				});
 			}
-			for (var i in SOCKET_LIST) {
-				var socket = SOCKET_LIST[i];
+			for (let i in SOCKET_LIST) {
+				let socket = SOCKET_LIST[i];
 				socket.emit("data", {
 					players: playerPack,
 					trails: trailPack,
