@@ -58,7 +58,7 @@ var Player = function(id) {
 		id: id,
 		afkKickTimeout: 100,
 		currentTrail: -1,
-		joinKickTimeout: 30,
+		joinKickTimeout: 80,
 		pressingRight: false,
 		pressingLeft: false,
 		pressingUp: false,
