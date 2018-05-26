@@ -156,6 +156,8 @@ socket.on("data", function(data) {
 		}
 
 		if (!data.players[i].isDead) {
+			ctx.fillStyle = "#000000";
+			ctx.fillRect(data.players[i].x - 3, data.players[i].y - 3, 6, 6);
 			ctx.fillStyle = "hsl(" + data.players[i].color + ", 100%, 50%)";
 			if (data.players[i].id == id) {
 				if (!data.gameStarted) {
@@ -170,7 +172,7 @@ socket.on("data", function(data) {
 				ctx.fillStyle = "#00FF00";
 			}
 
-			ctx.fillRect(data.players[i].x - 3, data.players[i].y - 3, 6, 6);
+			ctx.fillRect(data.players[i].x - 2, data.players[i].y - 2, 4, 4);
 			ctx.fillStyle = "#000000";
 			ctx.fillText(data.players[i].name, data.players[i].x, data.players[i].y - 10);
 		}
