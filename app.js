@@ -424,8 +424,6 @@ setInterval(function() {
 						WinnerList.push(player.name.replace("<", "&lt;").replace(">", "&gt;"));
 						lastWinner = player.name;
 						lastWinnerID = player.id;
-					} else {
-						lastWinner = "(Error: player not found)";
 					}
 					player.respawn();
 				}
