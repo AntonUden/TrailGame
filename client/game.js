@@ -146,7 +146,7 @@ socket.on("data", function(data) {
 	for (let i = 0; i < data.players.length; i++) {
 		if (data.players[i].id == id && data.players[i].isDead) {
 			ctx.font = "20px Arial";
-			if(data.players[i].hasJoine) {
+			if(data.players[i].hasJoined) {
 				ctx.fillStyle = "#AA0000";
 				ctx.fillText("You are dead", 600, 30);
 			} else {
@@ -169,7 +169,6 @@ socket.on("data", function(data) {
 					ctx.arc(data.players[i].x, data.players[i].y, 10 + (Math.cos(new Date().getTime() / 500) * 5), 0, 2 * Math.PI);
 					ctx.stroke();
 				}
-				ctx.fillStyle = "#00FF00";
 			}
 
 			ctx.fillRect(data.players[i].x - 2, data.players[i].y - 2, 4, 4);

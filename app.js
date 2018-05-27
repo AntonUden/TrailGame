@@ -58,7 +58,7 @@ var Player = function(id) {
 		id: id,
 		afkKickTimeout: 100,
 		currentTrail: -1,
-		joinKickTimeout: 80,
+		joinKickTimeout: 30,
 		pressingRight: false,
 		pressingLeft: false,
 		pressingUp: false,
@@ -279,15 +279,14 @@ io.sockets.on("connection", function(socket) {
 	// Key Presses
 	socket.on('keyPress', function(data) {
 		try {
-			if (data.inputId === 'left') {
+			if (data.inputId === 'left')
 				player.pressingLeft = data.state;
-			} else if (data.inputId === 'right') {
+			else if (data.inputId === 'right')
 				player.pressingRight = data.state;
-			} else if (data.inputId === 'up') {
+			else if (data.inputId === 'up')
 				player.pressingUp = data.state;
-			} else if (data.inputId === 'down') {
+			else if (data.inputId === 'down')
 				player.pressingDown = data.state;
-			}
 		} catch (err) {}
 	});
 
