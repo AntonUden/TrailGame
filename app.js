@@ -129,7 +129,7 @@ var Player = function(id) {
 						trail.endX = self.x;
 						trail.endY = self.y;
 					}
-				} else {}
+				}
 				self.x += self.mx;
 				self.y += self.my;
 
@@ -205,6 +205,7 @@ function getPlayerByID(id) {
 			return player;
 		}
 	}
+	return undefined;
 }
 
 function getTrailByID(id) {
@@ -214,6 +215,7 @@ function getTrailByID(id) {
 			return trail;
 		}
 	}
+	return undefined;
 }
 
 function disconnectSocket(id) {
