@@ -13,6 +13,7 @@
     "type": "git",
     "url": "git+https://github.com/Zeeraa/TrailGame.git"
   },
+  "license": "MIT",
   "dependencies": {
     "colors": "1.1.2",
     "express": "4.15.5",
