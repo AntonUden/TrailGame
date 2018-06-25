@@ -1,7 +1,7 @@
 {
   "name": "TrailGame",
   "version": "1.0.0",
-  "description": "",
+  "description": "html5 multiplayer game and server",
   "main": "app.js",
   "engines": {
     "node": "6.11.1"
