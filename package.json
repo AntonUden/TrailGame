@@ -1,7 +1,7 @@
 {
   "name": "TrailGame",
   "version": "1.0.0",
-  "description": "",
+  "description": "html5 multiplayer game and server",
   "main": "app.js",
   "engines": {
     "node": "6.11.1"
@@ -13,6 +13,7 @@
     "type": "git",
     "url": "git+https://github.com/Zeeraa/TrailGame.git"
   },
+  "license": "MIT",
   "dependencies": {
     "colors": "1.3.2",
     "express": "4.16.3",
